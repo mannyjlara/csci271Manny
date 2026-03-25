@@ -1,0 +1,75 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+
+using namespace std;
+
+struct Student {
+    string ID;
+    string Name;
+    string Major;
+    string Hobby;
+    float GPA;
+    string Email;
+    string City;
+};
+// sample data
+int main() {
+    Student students[3] = {
+        {"S01", "Tom", "MATH", "Football", 2.8f, "tom@google.com", "Modesto"},
+        {"S02", "Alice", "CS", "Reading", 3.5f, "alice@google.com", "Modesto"},
+        {"S03", "Scott", "CS", "Basketball", 3.2f, "scott@google.com", "SanJose"}
+    };
+
+    // step one : write to file
+    ofstream fout("students.txt");
+    for (int i = 0; i < 3; i++) {
+        fout << students[i].ID << " " << students[i].Name << " " << students[i].Major << " "
+             << students[i].Hobby << " " << students[i].GPA << " " << students[i].Email << " "
+             << students[i].City << "\n";
+    }
+    fout.close();
+    cout << "[1] Data saved to students.txt\n";
+
+    // step 2:   Read from file
+    Student loaded[3];
+    ifstream fin("students.txt");
+    int count = 0;
+    while (count < 3 && fin >> loaded[count].ID >> loaded[count].Name >> loaded[count].Major
+           >> loaded[count].Hobby >> loaded[count].GPA >> loaded[count].Email >> loaded[count].City) {
+        count++;
+    }
+    fin.close();
+    cout << "[2] Loaded " << count << " students from students.txt\n\n";
+
+    // step three display all students
+    cout << "[3] Displaying all students:\n";
+    cout << "-------------------------------------\n";
+    for (int i = 0; i < count; i++) {
+        cout << loaded[i].ID << " " << loaded[i].Name << " (" << loaded[i].Major << ") - "
+             << loaded[i].City << " - GPA: " << loaded[i].GPA << "\n";
+    }
+    cout << "\n";
+
+    // step 4 count GPA >= 3.0
+    int gpaCount = 0;
+    for (int i = 0; i < count; i++) {
+        if (loaded[i].GPA >= 3.0f) gpaCount++;
+    }
+    cout << "[4] Students with GPA >= 3.0: " << gpaCount << "\n\n";
+
+    // studernts from city
+    cout << "[5] Students from Modesto:\n";
+    bool found = false;
+    for (int i = 0; i < count; i++) {
+        if (loaded[i].City == "Modesto") {
+            cout << loaded[i].Name << " (" << loaded[i].Major << ", GPA " << loaded[i].GPA << ")\n";
+            found = true;
+        }
+    }
+    if (!found) cout << "No students found in that city.\n";
+
+    cout << "\nProgram finished.\n";
+
+    return 0;
+}
