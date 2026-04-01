@@ -1,0 +1,118 @@
+#include <iostream>
+#include <string>
+#include <iomanip>
+using namespace std;
+
+class CPU {
+private:
+    string id;    //  identifier
+    int ff;       
+    int mf;       // maximum frequency 
+    int cof;      
+    int cot;      // current temperature (°F)
+    double cmips; // current computing power 
+
+    void computeMIPS() { // recalculate 
+        cmips = cof / 10.0;
+    }
+
+public:
+    // Constructor
+    CPU(string _id, int _ff, int _mf, int _cof, int _cot) {
+        id = _id; ff = _ff; mf = _mf; cof = _cof; cot = _cot;
+        computeMIPS();
+    }
+
+    // Display  info
+    void display() {
+        cout << fixed << setprecision(2);
+        cout << "CPU ID: " << id << "\n";
+        cout << "Fundamental Frequency: " << ff << " Hz\n";
+        cout << "Maximum Frequency: " << mf << " Hz\n";
+        cout << "Current Frequency: " << cof << " Hz\n";
+        cout << "Current Temperature: " << cot << " °F\n";
+        cout << "Current Performance: " << cmips << " MIPS\n";
+        cout << "-------------------------------\n";
+    }
+
+    // Update 
+    void setTemperature(int temp) {
+        cot = temp;
+        if (cot < 176) {
+            cof += 200;
+            if (cof > mf) cof = mf;
+        } else if (cot > 176) {
+            cof -= 200;
+            if (cof < ff) cof = ff;
+        }
+        computeMIPS();
+    }
+
+    double getMIPS() { return cmips; }
+};
+
+int main() {
+    const int N = 4;
+    CPU cluster[N] = {
+        CPU("001", 2000, 4800, 2800, 132),
+        CPU("002", 2200, 5000, 3200, 131),
+        CPU("003", 2100, 4900, 3400, 142),
+        CPU("004", 2500, 4500, 3700, 144)
+    };
+
+    int choice;
+    do {
+        cout << "\n===== CPU Cluster Menu =====\n";
+        cout << "1. Display all CPUs\n";
+        cout << "2. Display one CPU\n";
+        cout << "3. Set temperature of one CPU\n";
+        cout << "4. Display total MIPS of cluster\n";
+        cout << "5. Exit\n";
+        cout << "Enter choice: ";
+
+        if (!(cin >> choice)) { 
+            cin.clear();
+            cin.ignore(1000, '\n');
+            choice = 0;
+        }
+
+        switch(choice) {
+            case 1:
+                for(int i=0;i<N;i++) cluster[i].display();
+                break;
+            case 2: {
+                int index;
+                cout << "Enter CPU index (0-" << N-1 << "): ";
+                cin >> index;
+                if(index>=0 && index<N) cluster[index].display();
+                else cout << "Invalid index.\n";
+                break;
+            }
+            case 3: {
+                int index, temp;
+                cout << "Enter CPU index (0-" << N-1 << "): ";
+                cin >> index;
+                if(index>=0 && index<N) {
+                    cout << "Enter new temperature (°F): ";
+                    cin >> temp;
+                    cluster[index].setTemperature(temp);
+                    cout << "Temperature updated.\n";
+                } else cout << "Invalid index.\n";
+                break;
+            }
+            case 4: {
+                double totalMIPS = 0;
+                for(int i=0;i<N;i++) totalMIPS += cluster[i].getMIPS();
+                cout << "Total cluster MIPS: " << totalMIPS << endl;
+                break;
+            }
+            case 5:
+                cout << "Program exited.\n";
+                break;
+            default:
+                cout << "Invalid choice.\n";
+        }
+    } while(choice != 5);
+
+    return 0;
+}
