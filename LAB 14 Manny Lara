@@ -1,0 +1,121 @@
+//TO DO: include the necessary header
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <iomanip>
+#include <string>
+
+// Enum class: course type
+enum class Course {
+// TODO: add course types here,
+    Chinese,
+    Math,
+    English,
+    Physics,
+    Chemistry
+};
+
+// Struct: bundle student score information
+struct StudentScore {
+// TODO: add data fields here
+    std::string name;
+    Course course;
+    int score;
+};
+
+// Helper function: convert enum value to string for printing
+std::string courseToString(Course course) {
+    switch (course) {
+        case Course::Chinese: return "Chinese";
+        case Course::Math: return "Math";
+        case Course::English: return "English";
+        case Course::Physics: return "Physics";
+        case Course::Chemistry: return "Chemistry";
+        default: return "Unknown course";
+    }
+}
+
+int main() {
+
+    // 1. Define a vector to store all score records
+    std::vector<StudentScore> scoreList;
+
+    // 2. Add scores (predefined data, no user input needed)
+    std::cout << "===== Step 1: Add student scores =====\n";
+    scoreList.push_back({"Alice", Course::Math, 95});
+    scoreList.push_back({"Brian", Course::Chinese, 88});
+    scoreList.push_back({"Carol", Course::English, 92});
+    scoreList.push_back({"David", Course::Math, 85});
+    scoreList.push_back({"Emma", Course::Physics, 79});
+    scoreList.push_back({"Frank", Course::Math, 98});
+    scoreList.push_back({"Grace", Course::English, 89});
+
+    std::cout << "Total records added: "
+              << scoreList.size() << "\n\n";
+
+    // 3. Traverse and print all scores in the original order
+    std::cout << "===== Step 2: Print all scores (original order) =====\n";
+
+    // use a range-based for loop to print
+    for (const auto& s : scoreList) {
+        std::cout << "Name: " << s.name
+                  << " | Course: " << courseToString(s.course)
+                  << " | Score: " << s.score << "\n";
+    }
+
+    std::cout << "\n";
+
+    // 4. Sort by score in descending order using std::sort + lambda
+    std::cout << "===== Step 3: Sort scores in descending order =====\n";
+
+    // TODO: call std::sort with a lambda to sort scoreList by score (high to low),
+    std::sort(scoreList.begin(), scoreList.end(),
+        [](const StudentScore& a, const StudentScore& b) {
+            return a.score > b.score;
+        });
+
+    // then print the sorted list
+    for (const auto& s : scoreList) {
+        std::cout << "Name: " << s.name
+                  << " | Course: " << courseToString(s.course)
+                  << " | Score: " << s.score << "\n";
+    }
+
+    std::cout << "\n";
+
+    // 5. Filter by course (Math) and compute average for that course
+    std::cout << "===== Step 4: Filter Math scores and compute average =====\n";
+
+
+    double mathSum = 0;
+    int mathCount = 0;
+
+    for (const auto& s : scoreList) {
+        if (s.course == Course::Math) {
+            std::cout << "Name: " << s.name
+                      << " | Score: " << s.score << "\n";
+            mathSum += s.score;
+            mathCount++;
+        }
+    }
+
+    double mathAvg = mathSum / mathCount;
+    std::cout << std::fixed << std::setprecision(1);
+    std::cout << "Math average score: " << mathAvg << "\n\n";
+
+    // 6. Compute the overall average score across all courses
+    std::cout << "===== Step 5: Compute overall average score =====\n";
+
+    
+    double total = 0;
+
+    for (const auto& s : scoreList) {
+        total += s.score;
+    }
+
+    double overallAvg = total / scoreList.size();
+    std::cout << std::fixed << std::setprecision(1);
+    std::cout << "Overall average score (all courses): " << overallAvg << "\n";
+
+    return 0;
+}
